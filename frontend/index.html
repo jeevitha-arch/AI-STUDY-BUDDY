@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Study Buddy</title>
+<style>
+:root{--bg:#f3f4fb;--card:#fff;--tx:#1d2433;--mu:#6b7488;--pr:#6c5ce7;--pr2:#a29bfe;--ok:#12b76a;--no:#f04438;--bd:#e6e8f2;--sh:0 8px 30px rgba(108,92,231,.10)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f111a;--card:#191c28;--tx:#eceef7;--mu:#99a1b7;--bd:#2a2f42;--sh:0 8px 30px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+header{background:linear-gradient(135deg,#6c5ce7,#a29bfe 55%,#74b9ff);color:#fff;padding:26px 20px 56px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:26px;letter-spacing:.3px}h1 span{opacity:.9}
+.tag{font-size:13px;opacity:.9;margin-top:4px}
+.key{display:flex;gap:6px;flex-wrap:wrap}
+.key input{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff}
+.key input::placeholder{color:rgba(255,255,255,.8)}
+input,textarea,select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;outline:none;transition:.2s}
+input:focus,textarea:focus,select:focus{border-color:var(--pr);box-shadow:0 0 0 3px rgba(108,92,231,.18)}
+textarea{width:100%;min-height:120px;resize:vertical}
+nav{display:flex;gap:8px;padding:0 20px;overflow-x:auto;margin-top:-30px;max-width:900px;margin-left:auto;margin-right:auto}
+nav button{border:0;background:var(--card);color:var(--tx);padding:11px 18px;border-radius:14px;cursor:pointer;font:inherit;white-space:nowrap;box-shadow:var(--sh);transition:.2s}
+nav button:hover{transform:translateY(-2px)}
+nav button.on{background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff}
+main{max-width:860px;margin:18px auto;padding:0 20px 50px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--sh);animation:up .35s ease}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.btn{background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff;border:0;padding:11px 20px;border-radius:12px;cursor:pointer;font:inherit;font-weight:600;margin-top:10px;transition:.2s;box-shadow:0 6px 16px rgba(108,92,231,.3)}
+.btn:hover{transform:translateY(-2px)}.btn:disabled{opacity:.5;transform:none}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#chat{height:390px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px}
+.m{padding:11px 14px;border-radius:16px;max-width:85%;white-space:pre-wrap;line-height:1.55;animation:up .25s ease}
+.u{align-self:flex-end;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff;border-bottom-right-radius:4px}
+.b{align-self:flex-start;background:var(--bg);border:1px solid var(--bd);border-bottom-left-radius:4px}
+.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:11px 14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;cursor:pointer;font:inherit;transition:.15s}
+.opt:hover{border-color:var(--pr);transform:translateX(3px)}
+.opt.ok{background:var(--ok);color:#fff;border-color:var(--ok)}.opt.no{background:var(--no);color:#fff;border-color:var(--no)}
+.fc{height:150px;cursor:pointer;margin-bottom:12px}
+.fc div{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;border-radius:16px;border:1px solid var(--bd);background:var(--card);font-size:18px;box-shadow:var(--sh);transition:.3s}
+.fc:hover div{transform:scale(1.02)}
+.fc.flip div{background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff}
+.mu{color:var(--mu);font-size:13px}.hide{display:none}
+#tm{background:linear-gradient(135deg,var(--pr),#74b9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+footer{text-align:center;color:var(--mu);font-size:13px;padding:0 0 28px}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:8px}
+
+body{background:linear-gradient(135deg,#1e1b4b,#4338ca 30%,#7c3aed 55%,#db2777 80%,#f59e0b);background-size:300% 300%;animation:bg 18s ease infinite;background-attachment:fixed}
+@keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(80px);z-index:-1;opacity:.55;animation:fl 14s ease-in-out infinite}
+body::before{width:380px;height:380px;background:#22d3ee;top:-80px;left:-80px}
+body::after{width:420px;height:420px;background:#f472b6;bottom:-100px;right:-100px;animation-delay:-6s}
+@keyframes fl{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,40px) scale(1.15)}}
+header{background:transparent!important;padding-bottom:64px}
+.card{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.5);color:#1d2433}
+.card .mu{color:#667085}
+.card input,.card textarea,.card select{background:#fff;color:#1d2433}
+nav button{background:rgba(255,255,255,.9);color:#1d2433;backdrop-filter:blur(10px)}
+.b{background:#f3f4fb!important;color:#1d2433}
+.opt,.fc div{background:#fff;color:#1d2433}
+.opt.ok,.opt.no{color:#fff}.fc.flip div{color:#fff}
+.card h3,.card p,.card b{color:#1d2433}
+footer{color:rgba(255,255,255,.85)}
+@media(prefers-color-scheme:dark){.card{background:rgba(25,28,40,.82);color:#eceef7;border-color:rgba(255,255,255,.12)}
+.card input,.card textarea,.card select,.opt,.fc div{background:#222638;color:#eceef7}
+.card h3,.card p,.card b{color:#eceef7}.b{background:#222638!important;color:#eceef7}.card .mu{color:#99a1b7}
+nav button{background:rgba(25,28,40,.85);color:#eceef7}}
+</style></head><body>
+<header>
+  <div><h1>📚 AI Study Buddy</h1><div class="tag">Learn smarter: chat, summarize, quiz, plan and track ✨</div></div>
+  <div class="key"><input id="key" type="password" placeholder="Gemini API key" size="22">
+  <input id="model" value="gemini-3.8-flash" size="16" title="model"></div>
+</header>
+<nav id="tabs"></nav>
+<main>
+  <section id="chatS" class="card"><div class="row" style="margin-bottom:10px"><span class="mu">Mode:</span><select id="mode"><option value="simple">Simple</option><option value="eli5">Explain like I'm 5</option><option value="exam">Exam-focused</option><option value="tamil">Tamil + English</option></select></div><div id="chat"></div>
+    <div class="row" style="margin-top:10px"><input id="cin" style="flex:1" placeholder="Ask your tutor anything…"><button class="btn" style="margin:0" id="send">Send</button></div></section>
+  <section id="sumS" class="card hide"><textarea id="sumIn" placeholder="Paste notes / chapter text…"></textarea><button class="btn" id="sumBtn">Summarize</button><div id="sumOut" class="m b hide" style="margin-top:12px;max-width:100%"></div></section>
+  <section id="quizS" class="card hide"><div class="row"><input id="qt" style="flex:1" placeholder="Topic (e.g. Neural Networks)"><select id="qd"><option>Easy</option><option selected>Medium</option><option>Hard</option></select><select id="qn"><option>5</option><option>3</option><option>10</option></select></div><button class="btn" id="qBtn">Generate Quiz</button><div id="qOut"></div></section>
+  <section id="flashS" class="card hide"><div class="row"><input id="ft" style="flex:1" placeholder="Topic for flashcards"></div><button class="btn" id="fBtn">Make Flashcards</button><p class="mu">Tap a card to flip.</p><div id="fOut"></div></section>
+<section id="planS" class="card hide"><div class="row"><input id="pg" style="flex:1" placeholder="Goal / exam (e.g. DBMS exam)"><input id="pd" type="number" min="1" value="5" style="width:80px" title="days"><input id="ph" type="number" min="1" value="2" style="width:80px" title="hours/day"></div><p class="mu">Goal, days left, hours per day</p><button class="btn" id="pBtn">Make Study Plan</button><div id="pOut" class="m b hide" style="margin-top:12px;max-width:100%"></div></section>
+<section id="timerS" class="card hide" style="text-align:center"><div id="tm" style="font-size:64px;font-weight:700">25:00</div><div id="tl" class="mu">Focus session</div><div class="row" style="justify-content:center"><button class="btn" id="tS">Start</button><button class="btn" id="tR">Reset</button></div><p class="mu">Sessions done: <b id="tc">0</b></p></section>
+<section id="progS" class="card hide"><h3 style="margin-top:0">Your progress</h3><div id="pgOut"></div><button class="btn" id="pgClr">Clear</button></section>
+</main>
+<footer>Built with ❤️ by Team AI Study Buddy · Powered by Gemini</footer>
+<script>
+const $=id=>document.getElementById(id);
+const tabs=[["chatS","💬 Tutor"],["sumS","📝 Summarize"],["quizS","❓ Quiz"],["flashS","🃏 Flashcards"],["planS","🗓 Planner"],["timerS","⏱ Pomodoro"],["progS","📈 Progress"]];
+tabs.forEach(([id,l],i)=>{const b=document.createElement("button");b.textContent=l;if(!i)b.className="on";b.onclick=()=>{tabs.forEach(([s])=>$(s).classList.toggle("hide",s!==id));[...$("tabs").children].forEach(x=>x.className=x===b?"on":"");};$("tabs").appendChild(b)});
+try{$("key").value=localStorage.getItem("gk")||""}catch(e){}
+$("key").onchange=()=>{try{localStorage.setItem("gk",$("key").value)}catch(e){}};
+
+async function call(model,k,body){
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${k}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const d=await r.json();return {ok:r.ok,d};
+}
+async function pickModel(k){
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${k}&pageSize=100`);
+  const d=await r.json();if(!r.ok)throw new Error(d.error?.message||"Cannot list models. Check API key.");
+  const ok=(d.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent")).map(m=>m.name.replace("models/",""));
+  const pref=ok.filter(n=>/flash/.test(n)&&!/(image|tts|live|audio|thinking|exp|preview|lite)/.test(n));
+  return (pref.length?pref:ok.filter(n=>/flash|gemini/.test(n)))[0]||ok[0];
+}
+async function gem(contents,system,json){
+  const k=$("key").value.trim(); if(!k) throw new Error("Enter your Gemini API key (top right).");
+  const body={contents,systemInstruction:{parts:[{text:system}]}};
+  if(json) body.generationConfig={responseMimeType:"application/json"};
+  let res=await call($("model").value.trim(),k,body);
+  if(!res.ok){
+    const m=await pickModel(k);
+    if(!m) throw new Error("No usable model for this key.");
+    $("model").value=m;
+    res=await call(m,k,body);
+  }
+  if(!res.ok) throw new Error(res.d.error?.message||"API error");
+  return res.d.candidates[0].content.parts.map(p=>p.text||"").join("");
+}
+const one=t=>[{role:"user",parts:[{text:t}]}];
+const parse=t=>JSON.parse(t.replace(/```json|```/g,"").trim());
+async function run(btn,fn){const o=btn.textContent;btn.disabled=true;btn.textContent="Thinking…";try{await fn()}catch(e){alert(e.message)}btn.disabled=false;btn.textContent=o}
+
+// Tutor chat
+const hist=[];
+function add(t,c){const d=document.createElement("div");d.className="m "+c;d.textContent=t;if(c==="b"){const sp=document.createElement("div");sp.className="mu";sp.style.cursor="pointer";sp.textContent="🔊 Read aloud";sp.onclick=()=>{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t))};d.appendChild(sp)}$("chat").appendChild(d);$("chat").scrollTop=1e9}
+add("Hi! I'm your Study Buddy. Ask me any concept and I'll explain it simply.","b");
+async function send(){const q=$("cin").value.trim();if(!q)return;$("cin").value="";add(q,"u");hist.push({role:"user",parts:[{text:q}]});
+  await run($("send"),async()=>{const M={simple:"Explain simply with an example.",eli5:"Explain like I am 5 using fun everyday analogies.",exam:"Answer in exam style: definition, key points, formula/diagram hints, likely questions.",tamil:"Explain in Tamil mixed with English technical terms (Tanglish)."};const a=await gem(hist,"You are a friendly study tutor for college students. "+M[$("mode").value]+" Keep answers short and end with one quick check question.");hist.push({role:"model",parts:[{text:a}]});add(a,"b")})}
+$("send").onclick=send;$("cin").onkeydown=e=>{if(e.key==="Enter")send()};
+
+// Summarize
+$("sumBtn").onclick=()=>run($("sumBtn"),async()=>{const t=$("sumIn").value.trim();if(!t)return;
+  const a=await gem(one(t),"Summarize the student's notes into: a 2-line overview, 5 key bullet points, and key terms. Be concise.");
+  $("sumOut").textContent=a;const cp=document.createElement("div");cp.className="mu";cp.style.cursor="pointer";cp.textContent="📋 Copy";cp.onclick=()=>navigator.clipboard.writeText(a);$("sumOut").appendChild(cp);$("sumOut").classList.remove("hide")});
+
+// Quiz
+$("qBtn").onclick=()=>run($("qBtn"),async()=>{const t=$("qt").value.trim();if(!t)return;
+  const a=await gem(one(`Topic: ${t}. Difficulty: ${$("qd").value}. Make ${$("qn").value} MCQs.`),'Return ONLY JSON: [{"q":"","options":["","","",""],"answer":0,"why":""}] where answer is the index of the correct option.',true);
+  const qs=parse(a);$("qOut").innerHTML="";let score=0,done=0;
+  qs.forEach((x,i)=>{const c=document.createElement("div");c.className="card";c.style.marginTop="12px";
+    c.innerHTML=`<b>${i+1}. ${x.q}</b>`;
+    x.options.forEach((o,j)=>{const b=document.createElement("button");b.className="opt";b.textContent=o;
+      b.onclick=()=>{if(c.dataset.d)return;c.dataset.d=1;done++;
+        if(j===x.answer){b.classList.add("ok");score++}else{b.classList.add("no");c.children[x.answer+1].classList.add("ok")}
+        const w=document.createElement("p");w.className="mu";w.textContent=x.why;c.appendChild(w);
+        if(done===qs.length){const s=document.createElement("h3");s.textContent=`Score: ${score}/${qs.length} 🎉`;$("qOut").appendChild(s);logP(t,score,qs.length)}};
+      c.appendChild(b)});$("qOut").appendChild(c)})});
+
+// Flashcards
+$("fBtn").onclick=()=>run($("fBtn"),async()=>{const t=$("ft").value.trim();if(!t)return;
+  const a=await gem(one(`Topic: ${t}. Make 8 flashcards.`),'Return ONLY JSON: [{"front":"","back":""}]',true);
+  $("fOut").innerHTML="";parse(a).forEach(x=>{const f=document.createElement("div");f.className="fc";f.innerHTML="<div></div>";
+    const d=f.firstChild;d.textContent=x.front;let s=0;f.onclick=()=>{s=!s;f.classList.toggle("flip",s);d.textContent=s?x.back:x.front};$("fOut").appendChild(f)})});
+
+// Planner
+$("pBtn").onclick=()=>run($("pBtn"),async()=>{const g=$("pg").value.trim();if(!g)return;
+  const a=await gem(one(`Goal: ${g}. Days left: ${$("pd").value}. Hours per day: ${$("ph").value}.`),"Create a day-by-day study plan with topics, time blocks, short breaks, and a revision day at the end. Be concise.");
+  $("pOut").textContent=a;$("pOut").classList.remove("hide")});
+
+// Pomodoro
+let tt=1500,iv=null,brk=false,cnt=0;
+const fmt=()=>{$("tm").textContent=String(Math.floor(tt/60)).padStart(2,"0")+":"+String(tt%60).padStart(2,"0")};
+$("tS").onclick=()=>{if(iv){clearInterval(iv);iv=null;$("tS").textContent="Start";return}
+  $("tS").textContent="Pause";iv=setInterval(()=>{tt--;fmt();if(tt<=0){clearInterval(iv);iv=null;
+    if(!brk){cnt++;$("tc").textContent=cnt;brk=true;tt=300;$("tl").textContent="Break time ☕"}else{brk=false;tt=1500;$("tl").textContent="Focus session"}
+    fmt();$("tS").textContent="Start";alert(brk?"Great work! Take a 5 min break.":"Break over, back to focus!")}},1000)};
+$("tR").onclick=()=>{clearInterval(iv);iv=null;brk=false;tt=1500;fmt();$("tl").textContent="Focus session";$("tS").textContent="Start"};
+
+// Progress
+function getP(){try{return JSON.parse(localStorage.getItem("prog")||"[]")}catch(e){return window._p||[]}}
+function logP(t,s,n){const p=getP();p.push({t,s,n,d:new Date().toLocaleDateString()});window._p=p;try{localStorage.setItem("prog",JSON.stringify(p))}catch(e){}showP()}
+function showP(){const p=getP();if(!p.length){$("pgOut").innerHTML='<p class="mu">No quizzes yet. Take one!</p>';return}
+  const avg=Math.round(p.reduce((a,x)=>a+x.s/x.n,0)/p.length*100);
+  $("pgOut").innerHTML=`<p>Quizzes: <b>${p.length}</b> · Average: <b>${avg}%</b></p>`+p.slice().reverse().map(x=>{const pc=Math.round(x.s/x.n*100);
+    return `<div style="margin:8px 0"><div class="row" style="justify-content:space-between"><span>${x.t}</span><span class="mu">${x.s}/${x.n} · ${x.d}</span></div><div style="height:8px;background:var(--bd);border-radius:6px"><div style="width:${pc}%;height:8px;border-radius:6px;background:${pc>=60?"var(--ok)":"var(--no)"}"></div></div></div>`}).join("")}
+$("pgClr").onclick=()=>{try{localStorage.removeItem("prog")}catch(e){}window._p=[];showP()};
+showP();
+</script></body></html>
